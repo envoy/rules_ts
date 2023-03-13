@@ -159,7 +159,7 @@ write_tsconfig_rule = rule(
 )
 
 # Syntax sugar around skylib's write_file
-def write_tsconfig(name, config, files, out, extends = None, allow_js = None, resolve_json_module = None):
+def write_tsconfig(name, config, files, out, extends = None, allow_js = None, resolve_json_module = None, **kwargs):
     """Wrapper around bazel_skylib's write_file which understands tsconfig paths
 
     Args:
@@ -189,4 +189,5 @@ def write_tsconfig(name, config, files, out, extends = None, allow_js = None, re
         out = out,
         allow_js = allow_js,
         resolve_json_module = resolve_json_module,
+        **kwargs,
     )
