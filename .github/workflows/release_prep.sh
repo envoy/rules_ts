@@ -13,6 +13,8 @@ git archive --format=tar --prefix=${PREFIX}/ ${TAG} | gzip > $ARCHIVE
 SHA=$(shasum -a 256 $ARCHIVE | awk '{print $1}')
 
 cat << EOF
+NB: rules_ts >= 2.0.0 requires Bazel >= 6.0.0
+
 ## Using [Bzlmod] with Bazel 6:
 
 Add to your \`MODULE.bazel\` file:
