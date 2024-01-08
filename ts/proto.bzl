@@ -46,7 +46,7 @@ load("@aspect_bazel_lib//lib:write_source_files.bzl", "write_source_files")
 load("@aspect_rules_js//js:defs.bzl", "js_binary")
 load("//ts/private:ts_proto_library.bzl", ts_proto_library_rule = "ts_proto_library")
 
-def ts_proto_library(name, node_modules, has_services = True, copy_files = True, files_to_copy = None, **kwargs):
+def ts_proto_library(name, node_modules, use_modules = True, has_services = True, copy_files = True, files_to_copy = None, **kwargs):
     """
     A macro to generate JavaScript code and TypeScript typings from .proto files.
 
@@ -55,6 +55,7 @@ def ts_proto_library(name, node_modules, has_services = True, copy_files = True,
         node_modules: Label pointing to the linked node_modules target where @bufbuild/protoc-gen-es is linked, e.g. //:node_modules.
             Since the generated code depends on @bufbuild/protobuf, this package must also be linked.
             If `has_services = True` then @bufbuild/proto-gen-connect-es should be linked as well.
+        use_modules: whether to generate files with ECMAScript modules. If set to false, uses CommonJS instead.
         has_services: whether the proto file contains a service, and therefore *_connect.{js,d.ts} should be written.
         copy_files: whether to copy the resulting .d.ts files back to the source tree, for the editor to locate them.
         files_to_copy: which files from the protoc output to copy. By default, scans for *.proto in the current package
@@ -101,6 +102,7 @@ def ts_proto_library(name, node_modules, has_services = True, copy_files = True,
         protoc_gen_connect_es = protoc_gen_connect_es_target,
         # The codegen always has a runtime dependency on the protobuf runtime
         deps = kwargs.pop("deps", []) + [node_modules + "/@bufbuild/protobuf"],
+        use_modules = use_modules,
         has_services = has_services,
         **kwargs
     )

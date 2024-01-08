@@ -6,10 +6,7 @@ load("@aspect_rules_js//js:providers.bzl", "JsInfo", "js_info")
 load("@rules_proto//proto:defs.bzl", "ProtoInfo", "proto_common")
 
 # buildifier: disable=function-docstring-header
-def _protoc_action(ctx, proto_info, outputs, options = {
-    "keep_empty_files": True,
-    "target": "js+dts",
-}):
+def _protoc_action(ctx, proto_info, outputs, options = {}):
     """Create an action like
     bazel-out/k8-opt-exec-2B5CBBC6/bin/external/com_google_protobuf/protoc $@' '' \
       '--plugin=protoc-gen-es=bazel-out/k8-opt-exec-2B5CBBC6/bin/plugin/bufbuild/protoc-gen-es.sh' \
@@ -60,7 +57,14 @@ def _ts_proto_library_impl(ctx):
     js_outs = _declare_outs(ctx, info, ".js")
     dts_outs = _declare_outs(ctx, info, ".d.ts")
 
-    _protoc_action(ctx, info, js_outs + dts_outs)
+    protoc_options = {
+        "keep_empty_files": True,
+        "target": "js+dts",
+    }
+    if not ctx.attr.use_modules:
+        protoc_options["js_import_style"] = "legacy_commonjs"
+
+    _protoc_action(ctx, info, js_outs + dts_outs, protoc_options)
 
     direct_srcs = depset(js_outs)
     direct_decls = depset(dts_outs)
@@ -96,6 +100,10 @@ ts_proto_library = rule(
         "deps": attr.label_list(
             providers = [JsInfo],
             doc = "Other ts_proto_library rules. TODO: could we collect them with an aspect",
+        ),
+        "use_modules": attr.bool(
+            doc = "whether to generate files with ECMAScript m",
+            default = True,
         ),
         "has_services": attr.bool(
             doc = "whether to generate service stubs with gen-connect-es",
