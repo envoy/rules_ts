@@ -87,12 +87,12 @@ def ts_proto_library(name, node_modules, use_modules = True, has_services = True
         directory_path(
             name = protoc_gen_connect_es_entry,
             tags = ["manual"],
-            directory = node_modules + "/@bufbuild/protoc-gen-connect-es/dir",
+            directory = node_modules + "/@connectrpc/protoc-gen-connect-es/dir",
             path = "bin/protoc-gen-connect-es",
         )
         js_binary(
             name = protoc_gen_connect_es_target,
-            data = [node_modules + "/@bufbuild/protoc-gen-connect-es"],
+            data = [node_modules + "/@connectrpc/protoc-gen-connect-es"],
             entry_point = protoc_gen_connect_es_entry,
         )
 
